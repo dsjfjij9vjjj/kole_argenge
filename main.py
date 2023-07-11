@@ -1,8 +1,10 @@
 import asyncio
+from email import message
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, F
+from aiogram.enums import ContentType
 from aiogram.filters import Command, Text
-from aiogram.types import Message
+from aiogram.types import Message, callback_query
 
 from config import config
 
@@ -35,6 +37,7 @@ if __name__ == '__main__':
 @dp.message(Command(commands=['help']))
 async def help_command(message: Message):
     await message.answer('Вот что я могу!')
+
     async def main():
         try:
             print('Bot Started')
@@ -43,25 +46,17 @@ async def help_command(message: Message):
             await bot.session.close()
 
 
-
-@dp.message(Text(text='1'))
-async def easter_egg(message: Message):
-    await message.answer('ХАХАХАХАХАХА')
-    async def main():
-        try:
-            print('Bot Started')
-            await dp.start_polling(bot)
-        finally:
-            await bot.session.close()
-
-
-@dp.message()
+@dp.message(F.content_type == ContentType.PHOTO)
 async def echo(message: Message):
-    await message.answer(message.text)
+    await message.answer_photo(message.photo[0].file_id)
 
-    async def main():
-        try:
-            print('Bot Started')
-            await dp.start_polling(bot)
-        finally:
-            await bot.session.close()
+
+@dp.message(F.content_type == Content_type.STIKER)
+async def echo(message: Message):
+    await message.answer_sticker(message.sticker.file_id)
+@dp.message()
+async def echo_all(message:Message):
+    await message.send_copy(message.chat.id)
+@dp.message(Text(text='Ответь'))
+async def reply(message: Message):
+    await message.reply('Ответил')
